@@ -1,10 +1,9 @@
 package org.example;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class Main {
 
@@ -12,20 +11,34 @@ public class Main {
 
         List<String> input = Arrays.asList("dog", "cat", "dog", "monkey", "cat", "dog", "fox", null);
 
-        Map<String, Long> duplicates = findDuplicateStrings2(input);
+        Map<String, Integer> duplicates = findDuplicateStrings(input);
 
         // Print the result
-        duplicates.forEach((key, value) -> System.out.println(key + ": " + value));
+        for (Map.Entry<String, Integer> entry : duplicates.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
 
     }
 
-    public static Map<String, Long> findDuplicateStrings2(List<String> strings) {
-        return strings.stream()
-                .filter(Objects::nonNull) // Filter out null values
-                .collect(Collectors.groupingBy(str -> str, Collectors.counting()))
-                .entrySet().stream()
-                .filter(entry -> entry.getValue() > 1)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    public static Map<String, Integer> findDuplicateStrings(List<String> strings) {
+        Map<String, Integer> countMap = new HashMap<>();
+        Map<String, Integer> duplicateMap = new HashMap<>();
+
+        // Count occurrences of each string
+        for (String str : strings) {
+            if (str != null) {
+                countMap.put(str, countMap.getOrDefault(str, 0) + 1);
+            }
+        }
+
+        // Filter strings that occur more than once
+        for (Map.Entry<String, Integer> entry : countMap.entrySet()) {
+            if (entry.getValue() > 1) {
+                duplicateMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return duplicateMap;
     }
 
 }
